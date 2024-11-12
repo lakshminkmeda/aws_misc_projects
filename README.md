@@ -6,7 +6,10 @@ Collection of various AWS learning projects
   - cf_vpc_template.yaml
   - cf_ec2server_template.yaml
 
-**Terraform Templates**
+
+
+**Terraform Templates**    
+
 2. Template to create a vpc and resources and delpoy a ec2 web server
   - 2 tf_main.tf
   - 2 tf_amzlnx_script.sh
