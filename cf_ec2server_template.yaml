@@ -1,0 +1,43 @@
+Parameters:
+  PublicSubnet:
+    Description: Select the Subnet ID
+    Type: 'AWS::EC2::Subnet::Id'
+  SecurityGroup:
+    Description: Select the Security Group
+    Type: 'AWS::EC2::SecurityGroup::Id'
+
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 'ami-04b54ebf295fe01d7'
+      InstanceType: t3.micro
+      Tags:
+        - Key: Name
+          Value: Web Server
+      UserData:
+        Fn::Base64:
+          !Sub |
+          #!/bin/sh
+          yum -y install httpd
+          chkconfig httpd on
+          systemctl start httpd
+          echo '<html><center><text="#252F3E" style="font-family: Amazon Ember"><h1>AWS CloudFormation is Fun !!!</h1>' > /var/www/html/index.html
+          echo '<h3><img src="https://d0.awsstatic.com/logos/powered-by-aws.png"></h3></html>' >> /var/www/html/index.html
+      NetworkInterfaces:
+        - GroupSet:
+            - !Ref SecurityGroup
+          AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          DeleteOnTermination: true
+          SubnetId: !Ref PublicSubnet
+
+Outputs:
+  PublicDNS:
+    Value: !Join 
+      - ''
+      - - 'http://'
+        - !GetAtt 
+          - WebServerInstance
+          - PublicDnsName
+    Description: Web Host Public URL
